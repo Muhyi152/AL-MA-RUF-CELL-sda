@@ -1,0 +1,1185 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Al-Ma'ruf Cell</title>
+    <link rel="icon" href="https://www.flaticon.com/svg/static/icons/svg/883/883654.svg" type="image/svg+xml">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    
+    <style>
+    /* --- Variabel CSS & Global Reset --- */
+    :root {
+        --bg-dark: #1a1a2e; /* Darker background */
+        --primary-surface: #2a2a4a; /* Slightly lighter surface */
+        --secondary-surface: #3a3a5a; /* Even lighter for inputs/cards */
+        --accent-yellow: #feda6a; /* Softer yellow */
+        --accent-purple: #9b59b6; /* Vibrant purple */
+        --text-primary: #e0e0e0; /* Light grey for primary text */
+        --text-secondary: #b0b0d0; /* Muted grey for secondary text */
+        --glow-yellow: rgba(254, 218, 106, 0.3);
+        --glow-purple: rgba(155, 89, 182, 0.3);
+        --gradient-1: linear-gradient(135deg, var(--accent-purple), var(--accent-yellow));
+        --gradient-2: linear-gradient(45deg, var(--accent-yellow), var(--accent-purple));
+    }
+
+    *, *::before, *::after {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+    }
+
+    html {
+        scroll-behavior: smooth;
+        font-size: 16px; /* Base font size */
+    }
+
+    body {
+        font-family: 'Poppins', sans-serif;
+        background-color: var(--bg-dark);
+        color: var(--text-primary);
+        line-height: 1.6;
+        overflow-x: hidden; /* Prevent horizontal scroll */
+        position: relative;
+    }
+
+    /* --- Global Animations --- */
+    @keyframes fadeIn {
+        from { opacity: 0; transform: translateY(20px); }
+        to { opacity: 1; transform: translateY(0); }
+    }
+
+    @keyframes slideInFromLeft {
+        from { opacity: 0; transform: translateX(-50px); }
+        to { opacity: 1; transform: translateX(0); }
+    }
+
+    @keyframes slideInFromRight {
+        from { opacity: 0; transform: translateX(50px); }
+        to { opacity: 1; transform: translateX(0); }
+    }
+
+    @keyframes backgroundPulse {
+        0% { transform: scale(1); opacity: 0.7; }
+        50% { transform: scale(1.05); opacity: 0.9; }
+        100% { transform: scale(1); opacity: 0.7; }
+    }
+
+    /* --- New Text Reveal/Fade Animation --- */
+    @keyframes textRevealFade {
+        0% { opacity: 0; transform: translateY(20px); } /* Start hidden, slightly below */
+        15% { opacity: 1; transform: translateY(0); } /* Appear */
+        85% { opacity: 1; transform: translateY(0); } /* Hold visible */
+        100% { opacity: 0; transform: translateY(-20px); } /* Disappear, slightly above */
+    }
+
+
+    /* --- Background Animated Glow --- */
+    .background-glow {
+        position: absolute;
+        width: 300px;
+        height: 300px;
+        border-radius: 50%;
+        filter: blur(80px);
+        opacity: 0.7;
+        z-index: -1;
+        animation: backgroundPulse 8s infinite alternate;
+    }
+
+    .glow-1 {
+        background-color: var(--accent-yellow);
+        top: 10%;
+        left: 5%;
+        animation-delay: 0s;
+    }
+
+    .glow-2 {
+        background-color: var(--accent-purple);
+        bottom: 15%;
+        right: 10%;
+        animation-delay: 2s;
+    }
+
+    /* --- Preloader --- */
+    #preloader {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background-color: var(--bg-dark);
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        z-index: 9999;
+        opacity: 1;
+        transition: opacity 0.8s ease-out;
+    }
+
+    #preloader.hidden {
+        opacity: 0;
+        visibility: hidden;
+    }
+
+    .spinner {
+        width: 60px;
+        height: 60px;
+        border: 6px solid rgba(255, 255, 255, 0.2);
+        border-top: 6px solid var(--accent-yellow);
+        border-radius: 50%;
+        animation: spin 1s linear infinite;
+    }
+
+    @keyframes spin {
+        0% { transform: rotate(0deg); }
+        100% { transform: rotate(360deg); }
+    }
+
+    /* --- View Management --- */
+    .view {
+        display: none;
+        opacity: 0;
+        transition: opacity 0.5s ease-in-out, transform 0.5s ease-in-out;
+        transform: translateY(20px);
+    }
+
+    .view.active {
+        display: block;
+        opacity: 1;
+        transform: translateY(0);
+    }
+
+    /* --- Authentication Pages --- */
+    .auth-container {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        min-height: 100vh;
+        padding: 2rem;
+    }
+
+    .auth-form {
+        background: var(--primary-surface);
+        padding: 2.5rem;
+        border-radius: 12px;
+        border: 1px solid var(--secondary-surface);
+        width: 100%;
+        max-width: 450px;
+        text-align: center;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4);
+        animation: fadeIn 0.7s ease-out;
+    }
+
+    .auth-form h2 {
+        margin-bottom: 0.5rem;
+        font-size: 2.2rem;
+        color: var(--accent-yellow);
+        text-shadow: 0 0 8px var(--glow-yellow);
+    }
+
+    .auth-form .subtitle {
+        margin-bottom: 2rem;
+        color: var(--text-secondary);
+        font-size: 0.95rem;
+    }
+
+    .form-group {
+        margin-bottom: 1.5rem;
+        text-align: left;
+    }
+
+    .form-group label {
+        display: block;
+        margin-bottom: 0.6rem;
+        font-weight: 600;
+        color: var(--text-primary);
+    }
+
+    .form-group input {
+        width: 100%;
+        padding: 0.9rem;
+        background: var(--secondary-surface);
+        border: 1px solid #444;
+        border-radius: 8px;
+        color: var(--text-primary);
+        font-size: 1rem;
+        box-sizing: border-box;
+        transition: border-color 0.3s ease, box-shadow 0.3s ease;
+    }
+
+    .form-group input:focus {
+        outline: none;
+        border-color: var(--accent-yellow);
+        box-shadow: 0 0 0 4px var(--glow-yellow);
+    }
+
+    .auth-form button {
+        width: 100%;
+        padding: 1.1rem;
+        background: var(--gradient-1);
+        color: var(--bg-dark);
+        border: none;
+        border-radius: 8px;
+        cursor: pointer;
+        font-size: 1.1rem;
+        font-weight: 700;
+        transition: all 0.3s ease;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+    }
+
+    .auth-form button:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3);
+        opacity: 0.9;
+    }
+
+    .switch-form {
+        margin-top: 1.5rem;
+        font-size: 0.9rem;
+        color: var(--text-secondary);
+    }
+
+    .switch-form a {
+        cursor: pointer;
+        font-weight: bold;
+        color: var(--accent-yellow);
+        text-decoration: none;
+        transition: color 0.3s ease;
+    }
+
+    .switch-form a:hover {
+        color: var(--accent-purple);
+    }
+
+    /* --- DASHBOARD STYLING --- */
+    .main-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 1rem 2.5rem;
+        background-color: rgba(30, 30, 30, 0.8);
+        backdrop-filter: blur(10px);
+        border-bottom: 1px solid var(--secondary-surface);
+        position: sticky;
+        top: 0;
+        z-index: 1000;
+        transition: all 0.3s ease;
+    }
+
+    .main-header.scrolled {
+        padding: 0.7rem 2.5rem;
+        background-color: rgba(30, 30, 30, 0.95);
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+    }
+
+    .logo {
+        font-size: 1.8rem;
+        font-weight: 800;
+        color: var(--accent-yellow);
+        text-shadow: 0 0 5px var(--glow-yellow);
+        transition: transform 0.3s ease;
+    }
+
+    .logo:hover {
+        transform: scale(1.05);
+    }
+
+    .main-nav ul {
+        list-style: none;
+        margin: 0;
+        padding: 0;
+        display: flex;
+        align-items: center;
+        gap: 2rem;
+    }
+
+    .main-nav a, .logout-button {
+        color: var(--text-secondary);
+        font-weight: 600;
+        padding: 0.5rem 0;
+        position: relative;
+        cursor: pointer;
+        background: none;
+        border: none;
+        font-size: 1rem;
+        font-family: 'Poppins', sans-serif;
+        text-decoration: none;
+        transition: color 0.3s ease;
+    }
+
+    .main-nav a::after {
+        content: '';
+        position: absolute;
+        bottom: -5px;
+        left: 0;
+        width: 0;
+        height: 3px;
+        background-color: var(--accent-yellow);
+        border-radius: 2px;
+        transition: width 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+    }
+
+    .main-nav a:hover, .main-nav a.active {
+        color: var(--text-primary);
+    }
+
+    .main-nav a:hover::after, .main-nav a.active::after {
+        width: 100%;
+    }
+
+    .dropdown {
+        position: relative;
+    }
+
+    .dropdown-content {
+        display: none;
+        position: absolute;
+        top: 130%; /* Adjust dropdown position */
+        left: 50%;
+        transform: translateX(-50%);
+        background-color: var(--primary-surface);
+        min-width: 200px;
+        box-shadow: 0 8px 25px rgba(0,0,0,0.5);
+        border-radius: 8px;
+        z-index: 1;
+        overflow: hidden;
+        opacity: 0;
+        transform: translateX(-50%) translateY(10px);
+        transition: opacity 0.3s ease, transform 0.3s ease;
+        pointer-events: none; /* Allows hover on parent to trigger */
+    }
+
+    .dropdown:hover .dropdown-content {
+        display: block;
+        opacity: 1;
+        transform: translateX(-50%) translateY(0);
+        pointer-events: auto;
+    }
+
+    .dropdown-content a {
+        padding: 10px 20px;
+        text-decoration: none;
+        display: block;
+        color: var(--text-secondary);
+        border-bottom: 1px solid var(--secondary-surface);
+        transition: background-color 0.2s ease, color 0.2s ease;
+    }
+
+    .dropdown-content a:last-child {
+        border-bottom: none;
+    }
+
+    .dropdown-content a:hover {
+        background-color: var(--secondary-surface);
+        color: var(--accent-yellow);
+    }
+
+    .logout-button {
+        background: var(--secondary-surface);
+        color: #ef4444;
+        padding: 0.6rem 1rem;
+        border-radius: 8px;
+        font-weight: 700;
+        transition: background-color 0.3s ease, color 0.3s ease, transform 0.3s ease;
+    }
+
+    .logout-button:hover {
+        background-color: #ef4444;
+        color: var(--bg-dark);
+        transform: translateY(-2px);
+        box-shadow: 0 4px 10px rgba(239, 68, 68, 0.3);
+    }
+
+    /* Hamburger Menu Icon */
+    .hamburger-menu {
+        display: none; /* Hidden by default on desktop */
+        width: 30px;
+        height: 20px;
+        position: relative;
+        cursor: pointer;
+        flex-direction: column;
+        justify-content: space-between;
+        align-items: center;
+        z-index: 1001; /* Ensure it's above other elements when open */
+    }
+
+    .hamburger-menu .bar {
+        width: 100%;
+        height: 3px;
+        background-color: var(--text-primary);
+        border-radius: 2px;
+        transition: all 0.3s ease-in-out;
+    }
+
+    .hamburger-menu.active .bar:nth-child(1) {
+        transform: translateY(8px) rotate(45deg);
+    }
+
+    .hamburger-menu.active .bar:nth-child(2) {
+        opacity: 0;
+    }
+
+    .hamburger-menu.active .bar:nth-child(3) {
+        transform: translateY(-8px) rotate(-45deg);
+    }
+
+    /* --- CONTENT STYLING --- */
+    .content-area {
+        padding: 1rem 2.5rem;
+        max-width: 1200px;
+        margin: 0 auto;
+    }
+
+    .page-content {
+        display: none;
+        padding-top: 2.5rem;
+        padding-bottom: 3rem;
+        animation: fadeIn 0.8s ease-in-out;
+        min-height: calc(100vh - 150px); /* Adjust for header/footer if any */
+    }
+
+    .page-content.active {
+        display: block;
+    }
+
+    .scroll-target {
+        scroll-margin-top: 100px; /* Offset for sticky header */
+    }
+
+    #beranda {
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        text-align: center;
+        padding-top: 5rem; /* Give more space for home content */
+        min-height: calc(100vh - 80px); /* Full height minus header */
+        animation: slideInFromLeft 0.8s ease-out; /* Initial slide in for the section */
+        overflow: hidden;
+        position: relative;
+    }
+
+    #beranda h2 {
+        font-size: 3.2rem;
+        font-weight: 800;
+        color: var(--text-primary);
+        margin-bottom: 1rem;
+        text-shadow: 0 0 10px rgba(0,0,0,0.5);
+        /* Animasi "buka tutup" */
+        animation: textRevealFade 6s ease-in-out infinite; /* 6s cycle: 1s muncul, 4s tahan, 1s hilang */
+        animation-delay: 0.5s; /* Mulai setelah sedikit delay */
+    }
+
+    #beranda h2 .highlight {
+        color: var(--accent-purple);
+        text-shadow: 0 0 12px var(--glow-purple);
+        display: inline-block; /* For transform animation */
+    }
+
+    .page-content h2 {
+        border-bottom: 3px solid var(--accent-yellow);
+        padding-bottom: 0.5rem;
+        display: inline-block;
+        margin-bottom: 2rem;
+        font-size: 2.2rem;
+        text-align: center;
+        width: 100%;
+        animation: fadeIn 0.6s ease-in-out;
+    }
+
+    .page-content p {
+        font-size: 1.1rem;
+        color: var(--text-secondary);
+        max-width: 700px;
+        margin: 0 auto 1.5rem auto;
+        text-align: center;
+        animation: fadeIn 0.7s ease-in-out;
+    }
+
+    /* --- PRODUCT GRID --- */
+    .product-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+        gap: 1.8rem;
+        padding: 1rem 0;
+    }
+
+    .product-card {
+        background: var(--primary-surface);
+        border: 1px solid var(--secondary-surface);
+        border-radius: 12px;
+        padding: 1.8rem;
+        text-align: center;
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+        position: relative;
+        overflow: hidden;
+        animation: fadeIn 0.5s ease-in-out;
+    }
+
+    .product-card::before {
+        content: '';
+        position: absolute;
+        top: -50%;
+        left: -50%;
+        width: 200%;
+        height: 200%;
+        background: radial-gradient(circle at center, var(--glow-yellow) 0%, transparent 70%);
+        opacity: 0;
+        transition: opacity 0.4s ease;
+        transform: scale(0.1);
+        z-index: 0;
+    }
+
+    .product-card:hover::before {
+        opacity: 0.1;
+        transform: scale(1);
+    }
+
+    .product-card:hover {
+        transform: translateY(-8px);
+        box-shadow: 0 15px 30px rgba(0, 0, 0, 0.4), 0 0 20px var(--glow-yellow);
+    }
+
+    .product-card img {
+        width: 90px;
+        height: 90px;
+        margin-bottom: 1.5rem;
+        object-fit: contain;
+        border-radius: 8px;
+        box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+        transition: transform 0.3s ease;
+        position: relative; /* For z-index over pseudo-element */
+        z-index: 1;
+    }
+
+    .product-card:hover img {
+        transform: scale(1.05);
+    }
+
+    .product-card h3 {
+        font-size: 1.2rem;
+        margin: 0 0 0.8rem 0;
+        color: var(--text-primary);
+        position: relative;
+        z-index: 1;
+    }
+
+    .product-card .price {
+        font-size: 1.3rem;
+        font-weight: 700;
+        color: var(--accent-yellow);
+        margin-bottom: 1.5rem;
+        position: relative;
+        z-index: 1;
+    }
+
+    .buy-button {
+        background: var(--gradient-2);
+        color: var(--bg-dark);
+        padding: 0.8rem 1.5rem;
+        border: none;
+        border-radius: 8px;
+        cursor: pointer;
+        font-weight: 700;
+        width: 100%;
+        font-size: 1rem;
+        transition: all 0.3s ease;
+        position: relative;
+        z-index: 1;
+        box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+    }
+
+    .buy-button:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 6px 15px rgba(0,0,0,0.3), 0 0 10px var(--glow-yellow);
+        opacity: 0.95;
+    }
+
+    /* --- FOOTER (Optional, but good for contact info) --- */
+    .main-footer {
+        background-color: var(--primary-surface);
+        color: var(--text-secondary);
+        text-align: center;
+        padding: 1.5rem;
+        border-top: 1px solid var(--secondary-surface);
+        font-size: 0.9rem;
+        margin-top: 2rem;
+    }
+
+    /* ======================================= */
+    /* === RESPONSIVE IMPROVEMENTS (MEDIA QUERIES) === */
+    /* ======================================= */
+
+    @media (max-width: 768px) {
+        html {
+            font-size: 15px; /* Slightly smaller base font on smaller screens */
+        }
+
+        .main-header {
+            padding: 0.8rem 1.5rem;
+        }
+
+        .logo {
+            font-size: 1.6rem;
+        }
+
+        .main-nav ul {
+            display: none; /* Sembunyikan menu desktop */
+            position: fixed;
+            top: 65px; /* Tinggi header yang lebih kecil */
+            left: 0;
+            width: 100%;
+            height: calc(100vh - 65px);
+            background-color: var(--bg-dark);
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 2rem;
+            transform: translateX(100%);
+            transition: transform 0.4s ease-in-out;
+            z-index: 999; /* Below hamburger, above content */
+            box-shadow: 0 8px 25px rgba(0,0,0,0.5);
+        }
+
+        .main-nav ul.mobile-nav-active {
+            display: flex; /* Tampilkan kembali saat aktif */
+            transform: translateX(0);
+        }
+
+        .main-nav a {
+            font-size: 1.2rem;
+            padding: 1rem 0;
+            width: 80%;
+            text-align: center;
+        }
+
+        .main-nav a::after {
+            height: 4px; /* Thicker underline on mobile */
+            bottom: 0px;
+        }
+
+        .hamburger-menu {
+            display: flex; /* Tampilkan ikon hamburger */
+        }
+
+        .dropdown-content {
+            position: static; /* Stack vertically on mobile */
+            transform: none;
+            box-shadow: none;
+            background: none;
+            text-align: center;
+            width: 100%;
+            border-radius: 0;
+            opacity: 1; /* Always visible when dropdown is open on mobile */
+            pointer-events: auto;
+            padding-top: 0.5rem;
+            padding-bottom: 0.5rem;
+        }
+
+        .dropdown-content a {
+            padding: 0.8rem 20px;
+            font-size: 1.1rem;
+            border-bottom: none; /* Remove border between dropdown items */
+        }
+        .dropdown-content a:hover {
+            background-color: rgba(255,255,255,0.05); /* Lighter hover for mobile dropdown */
+        }
+
+
+        .dropdown:hover .dropdown-content {
+            display: flex; /* Show dropdown when parent hovered */
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+        /* Force dropdown to expand on mobile when clicked */
+        .main-nav ul.mobile-nav-active .dropdown-content {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .content-area {
+            padding: 1rem 1.5rem;
+        }
+
+        #beranda h2 {
+            font-size: 2rem;
+        }
+
+        #beranda {
+            padding-top: 3rem;
+        }
+
+        .product-grid {
+            grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+            gap: 1rem;
+        }
+
+        .product-card {
+            padding: 1.2rem;
+        }
+
+        .product-card img {
+            width: 70px;
+            height: 70px;
+            margin-bottom: 1rem;
+        }
+
+        .product-card h3 {
+            font-size: 1rem;
+        }
+
+        .product-card .price {
+            font-size: 1.1rem;
+        }
+
+        .auth-form {
+            padding: 2rem;
+        }
+
+        .auth-form h2 {
+            font-size: 1.8rem;
+        }
+    }
+
+    @media (max-width: 480px) {
+        html {
+            font-size: 14px;
+        }
+
+        .auth-form {
+            padding: 1.5rem;
+        }
+
+        .auth-form h2 {
+            font-size: 1.6rem;
+        }
+
+        .product-grid {
+            grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+        }
+    }
+</style>
+</head>
+<body>
+
+    <div id="preloader">
+        <div class="spinner"></div>
+    </div>
+
+    <div class="background-glow glow-1"></div>
+    <div class="background-glow glow-2"></div>
+
+    <div id="login-view" class="view">
+        <div class="auth-container">
+            <form id="login-form" class="auth-form">
+                <h2>Selamat Datang Kembali!</h2>
+                <p class="subtitle">Silakan login ke akun Anda.</p>
+                <div class="form-group">
+                    <label for="login-email">Email</label>
+                    <input type="email" id="login-email" required autocomplete="email">
+                </div>
+                <div class="form-group">
+                    <label for="login-password">Password</label>
+                    <input type="password" id="login-password" required autocomplete="current-password">
+                </div>
+                <button type="submit">Login</button>
+                <p class="switch-form">Belum punya akun? <a id="go-to-register">Daftar di sini</a></p>
+            </form>
+        </div>
+    </div>
+
+    <div id="register-view" class="view">
+        <div class="auth-container">
+            <form id="register-form" class="auth-form">
+                <h2>Daftar Akun Baru</h2>
+                <p class="subtitle">Buat akun untuk mulai bertransaksi.</p>
+                <div class="form-group">
+                    <label for="register-nama">Nama Lengkap</label>
+                    <input type="text" id="register-nama" required autocomplete="name">
+                </div>
+                <div class="form-group">
+                    <label for="register-email">Email</label>
+                    <input type="email" id="register-email" required autocomplete="email">
+                </div>
+                <div class="form-group">
+                    <label for="register-password">Password</label>
+                    <input type="password" id="register-password" required autocomplete="new-password">
+                </div>
+                <button type="submit">Daftar</button>
+                <p class="switch-form">Sudah punya akun? <a id="go-to-login">Login di sini</a></p>
+            </form>
+        </div>
+    </div>
+
+    <div id="dashboard-view" class="view">
+        <header class="main-header">
+            <div class="logo">Al-Ma'ruf Cell</div>
+            <nav class="main-nav">
+                <ul id="main-nav-list">
+                    <li><a class="nav-link active" data-target="beranda">Beranda</a></li>
+                    <li><a class="nav-link" data-target="tentang">Tentang Kami</a></li>
+                    <li class="dropdown">
+                        <a class="nav-link dropdown-toggle" href="#">Produk <i class="fas fa-chevron-down" style="font-size: 0.7em; margin-left: 5px;"></i></a>
+                        <div class="dropdown-content">
+                            <a class="nav-link" data-target="produk-pulsa">Pulsa</a>
+                            <a class="nav-link" data-target="produk-data">Pulsa Data</a>
+                            <a class="nav-link" data-target="produk-token">Token Listrik</a>
+                            <a class="nav-link" data-target="produk-topup">Top Up</a>
+                        </div>
+                    </li>
+                    <li><button id="logout-btn" class="logout-button">Logout</button></li>
+                </ul>
+            </nav>
+            <div id="hamburger-btn" class="hamburger-menu">
+                <div class="bar"></div>
+                <div class="bar"></div>
+                <div class="bar"></div>
+            </div>
+        </header>
+
+        <main class="content-area">
+            <section id="beranda" class="page-content active">
+                <h2 id="welcome-title">Halo, <br>Selamat Datang di <span class="highlight">Al-Ma'ruf Cell</span></h2>
+            </section>
+            <section id="tentang" class="page-content scroll-target">
+                <h2>Tentang Kami</h2>
+                <p><strong>Alamat:</strong> Jl. Blambangan Rt.04/Rw.02 Indonesia</p>
+                <p><strong>No. Telepon/WhatsApp:</strong> <a href="https://wa.me/6285792698607" target="_blank" style="color: var(--accent-yellow); text-decoration: none;">085792698607</a></p>
+                <p><strong>Email:</strong> <a href="mailto:almarufcell024@gmail.com" style="color: var(--accent-yellow); text-decoration: none;">almarufcell024@gmail.com</a></p>
+            </section>
+            <section id="produk-pulsa" class="page-content scroll-target">
+                <h2>Produk Pulsa</h2>
+                <div class="product-grid" id="pulsa-grid"></div>
+            </section>
+            <section id="produk-data" class="page-content scroll-target">
+                <h2>Produk Pulsa Data</h2>
+                <div class="product-grid" id="data-grid"></div>
+            </section>
+            <section id="produk-token" class="page-content scroll-target">
+                <h2>Token Listrik</h2>
+                <div class="product-grid" id="token-grid"></div>
+            </section>
+            <section id="produk-topup" class="page-content scroll-target">
+                <h2>Top Up Game</h2>
+                <div class="product-grid" id="topup-grid"></div>
+            </section>
+        </main>
+
+        <footer class="main-footer">
+            <p>&copy; 2025 Al-Ma'ruf Cell. Hak Cipta Dilindungi.</p>
+        </footer>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const NOMOR_WHATSAPP_PENJUAL = '6285792698607'; // Gunakan format internasional tanpa '+'
+
+            // Data Produk
+            const produk = {
+                pulsa: [
+                    { nama: 'Pulsa Telkomsel 10rb', harga: 12000, img: 'img/telkomsel.jpg' },
+                    { nama: 'Pulsa Telkomsel 20rb', harga: 22000, img: 'img/telkomsel.jpg' },
+                    { nama: 'Pulsa Telkomsel 30rb', harga: 32000, img: 'img/telkomsel.jpg' },
+                    { nama: 'Pulsa Telkomsel 40rb', harga: 42000, img: 'img/telkomsel.jpg' },
+                    { nama: 'Pulsa Telkomsel 50rb', harga: 52000, img: 'img/telkomsel.jpg' },
+                    { nama: 'Pulsa Telkomsel 60rb', harga: 62000, img: 'img/telkomsel.jpg' },
+                    { nama: 'Pulsa Telkomsel 70rb', harga: 72000, img: 'img/telkomsel.jpg' },
+                    { nama: 'Pulsa Telkomsel 80rb', harga: 82000, img: 'img/telkomsel.jpg' },
+                    { nama: 'Pulsa Telkomsel 90rb', harga: 92000, img: 'img/telkomsel.jpg' },
+                    { nama: 'Pulsa Telkomsel 100rb', harga: 102000, img: 'img/telkomsel.jpg' },
+                    { nama: 'Pulsa XL 10rb', harga: 12000, img: 'img/7c0eed0a_410686bf_xl.jpg' },
+                    { nama: 'Pulsa XL 20rb', harga: 22000, img: 'img/7c0eed0a_410686bf_xl.jpg' },
+                    { nama: 'Pulsa XL 30rb', harga: 32000, img: 'img/7c0eed0a_410686bf_xl.jpg' },
+                    { nama: 'Pulsa XL 40rb', harga: 42000, img: 'img/7c0eed0a_410686bf_xl.jpg' },
+                    { nama: 'Pulsa XL 50rb', harga: 52000, img: 'img/7c0eed0a_410686bf_xl.jpg' },
+                    { nama: 'Pulsa XL 70rb', harga: 72000, img: 'img/7c0eed0a_410686bf_xl.jpg' },
+                    { nama: 'Pulsa XL 80rb', harga: 82000, img: 'img/7c0eed0a_410686bf_xl.jpg' },
+                    { nama: 'Pulsa XL 90rb', harga: 92000, img: 'img/7c0eed0a_410686bf_xl.jpg' },
+                    { nama: 'Pulsa XL 100rb', harga: 102000, img: 'img/7c0eed0a_410686bf_xl.jpg' },
+                    { nama: 'Pulsa AXIS 10rb', harga: 12000, img: 'img/29f75a2d_AXIS.jpg' },
+                    { nama: 'Pulsa AXIS 20rb', harga: 22000, img: 'img/29f75a2d_AXIS.jpg' },
+                    { nama: 'Pulsa AXIS 30rb', harga: 32000, img: 'img/29f75a2d_AXIS.jpg' },
+                    { nama: 'Pulsa AXIS 40rb', harga: 42000, img: 'img/29f75a2d_AXIS.jpg' },
+                    { nama: 'Pulsa AXIS 50rb', harga: 52000, img: 'img/29f75a2d_AXIS.jpg' },
+                    { nama: 'Pulsa AXIS 60rb', harga: 62000, img: 'img/29f75a2d_AXIS.jpg' },
+                    { nama: 'Pulsa AXIS 70rb', harga: 72000, img: 'img/29f75a2d_AXIS.jpg' },
+                    { nama: 'Pulsa AXIS 80rb', harga: 82000, img: 'img/29f75a2d_AXIS.jpg' },
+                    { nama: 'Pulsa AXIS 90rb', harga: 92000, img: 'img/29f75a2d_AXIS.jpg' },
+                    { nama: 'Pulsa AXIS 100rb', harga: 102000, img: 'img/29f75a2d_AXIS.jpg' },
+                    { nama: 'Pulsa IM3 10rb', harga: 12000, img: 'img/im3.png' },
+                    { nama: 'Pulsa IM3 20rb', harga: 22000, img: 'img/im3.png' },
+                    { nama: 'Pulsa IM3 30rb', harga: 32000, img: 'img/im3.png' },
+                    { nama: 'Pulsa IM3 40rb', harga: 40000, img: 'img/im3.png' },
+                    { nama: 'Pulsa IM3 50rb', harga: 52000, img: 'img/im3.png' },
+                    { nama: 'Pulsa IM3 60rb', harga: 62000, img: 'img/im3.png' },
+                    { nama: 'Pulsa IM3 70rb', harga: 72000, img: 'img/im3.png' },
+                    { nama: 'Pulsa IM3 80rb', harga: 82000, img: 'img/im3.png' },
+                    { nama: 'Pulsa IM3 90rb', harga: 92000, img: 'img/im3.png' },
+                    { nama: 'Pulsa IM3 100rb', harga: 102000, img: 'img/im3.png' },
+                    { nama: 'Pulsa SMARTFREN 10rb', harga: 12000, img: 'img/smrt.png' },
+                    { nama: 'Pulsa SMARTFREN 20rb', harga: 22000, img: 'img/smrt.png' },
+                    { nama: 'Pulsa SMARTFREN 30rb', harga: 32000, img: 'img/smrt.png' },
+                    { nama: 'Pulsa SMARTFREN 40rb', harga: 40000, img: 'img/smrt.png' },
+                    { nama: 'Pulsa SMARTFREN 50rb', harga: 52000, img: 'img/smrt.png' },
+                    { nama: 'Pulsa SMARTFREN 60rb', harga: 62000, img: 'img/smrt.png' },
+                    { nama: 'Pulsa SMARTFREN 70rb', harga: 72000, img: 'img/smrt.png' },
+                    { nama: 'Pulsa SMARTFREN 80rb', harga: 82000, img: 'img/smrt.png' },
+                    { nama: 'Pulsa SMARTFREN 90rb', harga: 92000, img: 'img/smrt.png' },
+                    { nama: 'Pulsa SMARTFREN 100rb', harga: 102000, img: 'img/smrt.png' },
+                ],
+                data: [
+                    { nama: 'Data 5GB XL', harga: 45000, img: 'img/7c0eed0a_410686bf_xl.jpg' },
+                    { nama: 'Data 10GB XL', harga: 80000, img: 'img/7c0eed0a_410686bf_xl.jpg' },
+                    { nama: 'Data 15GB XL', harga: 100000, img: 'img/7c0eed0a_410686bf_xl.jpg' },
+                    { nama: 'Data 20GB XL', harga: 120000, img: 'img/7c0eed0a_410686bf_xl.jpg' },
+                    { nama: 'Data 30GB XL', harga: 150000, img: 'img/7c0eed0a_410686bf_xl.jpg' },
+                    { nama: 'Data 5GB IM3', harga: 45000, img: 'img/im3.png' },
+                    { nama: 'Data 10GB IM3', harga: 80000, img: 'img/im3.png' },
+                    { nama: 'Data 15GB IM3', harga: 100000, img: 'img/im3.png' },
+                    { nama: 'Data 20GB IM3', harga: 120000, img: 'img/im3.png' },
+                    { nama: 'Data 30GB IM3', harga: 150000, img: 'img/im3.png' },
+                    { nama: 'Data 5GB Telkomsel', harga: 45000, img: 'img/telkomsel.jpg' },
+                    { nama: 'Data 10GB Telkomsel', harga: 80000, img: 'img/telkomsel.jpg' },
+                    { nama: 'Data 15GB Telkomsel', harga: 100000, img: 'img/telkomsel.jpg' },
+                    { nama: 'Data 20GB Telkomsel', harga: 120000, img: 'img/telkomsel.jpg' },
+                    { nama: 'Data 30GB Telkomsel', harga: 150000, img: 'img/telkomsel.jpg' },
+                    { nama: 'Data 5GB AXIS', harga: 45000, img: 'img/axis.png' },
+                    { nama: 'Data 10GB AXIS', harga: 80000, img: 'img/axis.png' },
+                    { nama: 'Data 15GB AXIS', harga: 100000, img: 'img/axis.png' },
+                    { nama: 'Data 20GB AXIS', harga: 120000, img: 'img/axis.png' },
+                    { nama: 'Data 30GB AXIS', harga: 150000, img: 'img/axis.png' },
+                    { nama: 'Data 5GB SMARTFREN', harga: 45000, img: 'img/smrt.png' },
+                    { nama: 'Data 10GB SMARTFREN', harga: 80000, img: 'img/smrt.png' },
+                    { nama: 'Data 15GB SMARTFREN', harga: 100000, img: 'img/smrt.png' },
+                    { nama: 'Data 20GB SMARTFREN', harga: 120000, img: 'img/smrt.png' },
+                    { nama: 'Data 30GB SMARTFREN', harga: 150000, img: 'img/smrt.png' },
+                ],
+                token: [
+                    { nama: 'Token Listrik 20rb', harga: 24000, img: 'img/0c40e51d_token.jpg' },
+                    { nama: 'Token Listrik 50rb', harga: 54000, img: 'img/0c40e51d_token.jpg' },
+                    { nama: 'Token Listrik 100rb', harga: 104000, img: 'img/0c40e51d_token.jpg' },
+                    { nama: 'Token Listrik 300rb', harga: 304000, img: 'img/0c40e51d_token.jpg' },
+                    { nama: 'Token Listrik 500rb', harga: 504000, img: 'img/0c40e51d_token.jpg' },
+                ],
+                topup: [
+                    { nama: 'Diamonds MLBB 86', harga: 25000, img: 'img/Diamond.jpg' },
+                    { nama: 'Diamonds MLBB 172', harga: 50000, img: 'img/Diamond.jpg' },
+                    { nama: 'Diamonds MLBB 257', harga: 75000, img: 'img/Diamond.jpg' },
+                    { nama: 'Diamonds MLBB 344', harga: 100000, img: 'img/Diamond.jpg' },
+                    { nama: 'Diamonds MLBB 429', harga: 125000, img: 'img/Diamond.jpg' },
+                    { nama: 'Diamonds MLBB 514', harga: 150000, img: 'img/Diamond.jpg' },
+                    { nama: 'Free Fire Diamonds 140', harga: 20000, img: 'img/FF.jpg' },
+                    { nama: 'Free Fire Diamonds 280', harga: 40000, img: 'img/FF.jpg' },
+                    { nama: 'Free Fire Diamonds 420', harga: 60000, img: 'img/FF.jpg' },
+                    { nama: 'Free Fire Diamonds 700', harga: 100000, img: 'img/FF.jpg' },
+                    { nama: 'PUBG Mobile UC 60', harga: 15000, img: 'img/pubg.jpg' },
+                    { nama: 'PUBG Mobile UC 300', harga: 70000, img: 'img/pubg.jpg' },
+                    { nama: 'PUBG Mobile UC 600', harga: 130000, img: 'img/pubg.jpg' },
+                ],
+            };
+
+            // Elemen DOM
+            const preloader = document.getElementById('preloader');
+            const loginView = document.getElementById('login-view');
+            const registerView = document.getElementById('register-view');
+            const dashboardView = document.getElementById('dashboard-view');
+            const allViews = [loginView, registerView, dashboardView];
+
+            const loginForm = document.getElementById('login-form');
+            const registerForm = document.getElementById('register-form');
+            const goToRegisterLink = document.getElementById('go-to-register');
+            const goToLoginLink = document.getElementById('go-to-login');
+            
+            const mainHeader = document.querySelector('.main-header');
+            const navLinks = document.querySelectorAll('.nav-link');
+            const pageContents = document.querySelectorAll('.page-content');
+            const hamburgerBtn = document.getElementById('hamburger-btn');
+            const navList = document.getElementById('main-nav-list');
+            const logoutBtn = document.getElementById('logout-btn');
+
+            // Fungsi untuk menampilkan view tertentu
+            function showView(viewToShow) {
+                allViews.forEach(view => {
+                    view.classList.remove('active');
+                    // Reset scroll position for hidden views (optional, but good for UX)
+                    view.scrollTop = 0; 
+                });
+                viewToShow.classList.add('active');
+            }
+
+            // Fungsi untuk menginisialisasi aplikasi (cek login)
+            function initializeApp() {
+                const currentUser = JSON.parse(localStorage.getItem('currentUser'));
+                if (currentUser) {
+                    setupDashboard(currentUser);
+                    showView(dashboardView);
+                } else {
+                    showView(loginView);
+                }
+                // Sembunyikan preloader setelah aplikasi siap
+                setTimeout(() => {
+                    preloader.classList.add('hidden');
+                }, 500); // Durasi animasi preloader
+            }
+
+            // Fungsi untuk menyiapkan dashboard setelah login
+            function setupDashboard(user) {
+                document.getElementById('welcome-title').innerHTML = `Halo, ${user.nama.split(' ')[0]}! <br>Selamat Datang di <span class="highlight">Al-Ma'ruf Cell</span>`;
+                
+                // Helper untuk membuat kartu produk
+                function createProductCard(item) {
+                    return `
+                        <div class="product-card">
+                            <img src="${item.img}" alt="${item.nama}">
+                            <h3>${item.nama}</h3>
+                            <p class="price">Rp ${item.harga.toLocaleString('id-ID')}</p>
+                            <button class="buy-button" data-nama="${item.nama}" data-harga="${item.harga}">Beli Sekarang</button>
+                        </div>
+                    `;
+                }
+
+                // Render produk ke masing-masing grid
+                document.getElementById('pulsa-grid').innerHTML = produk.pulsa.map(createProductCard).join('');
+                document.getElementById('data-grid').innerHTML = produk.data.map(createProductCard).join('');
+                document.getElementById('token-grid').innerHTML = produk.token.map(createProductCard).join('');
+                document.getElementById('topup-grid').innerHTML = produk.topup.map(createProductCard).join('');
+
+                // Tambahkan event listener untuk tombol beli
+                document.querySelectorAll('.buy-button').forEach(button => {
+                    button.addEventListener('click', (e) => {
+                        const namaProduk = e.target.getAttribute('data-nama');
+                        const hargaProduk = e.target.getAttribute('data-harga');
+                        const pesan = `Halo Al-Ma'ruf Cell, saya ${user.nama} ingin membeli produk ${namaProduk} dengan harga Rp ${parseInt(hargaProduk).toLocaleString('id-ID')}. Mohon info selanjutnya.`;
+                        window.open(`https://api.whatsapp.com/send?phone=${NOMOR_WHATSAPP_PENJUAL}&text=${encodeURIComponent(pesan)}`, '_blank');
+                    });
+                });
+            }
+
+            // Event Listeners untuk form otentikasi
+            goToRegisterLink.addEventListener('click', (e) => { 
+                e.preventDefault(); 
+                showView(registerView); 
+            });
+
+            goToLoginLink.addEventListener('click', (e) => { 
+                e.preventDefault(); 
+                showView(loginView); 
+            });
+            
+            registerForm.addEventListener('submit', (e) => {
+                e.preventDefault();
+                const nama = document.getElementById('register-nama').value;
+                const email = document.getElementById('register-email').value;
+                const password = document.getElementById('register-password').value;
+
+                if (localStorage.getItem(email)) {
+                    alert('Email sudah terdaftar!');
+                    return;
+                }
+
+                localStorage.setItem(email, JSON.stringify({ nama, password }));
+                alert('Pendaftaran berhasil! Silakan login.');
+                registerForm.reset();
+                showView(loginView);
+            });
+
+            loginForm.addEventListener('submit', (e) => {
+                e.preventDefault();
+                const email = document.getElementById('login-email').value;
+                const password = document.getElementById('login-password').value;
+
+                const storedData = localStorage.getItem(email);
+                if (!storedData) {
+                    alert('Email tidak ditemukan!');
+                    return;
+                }
+
+                const userData = JSON.parse(storedData);
+                if (userData.password === password) {
+                    localStorage.setItem('currentUser', JSON.stringify({ nama: userData.nama, email }));
+                    loginForm.reset();
+                    initializeApp(); // Panggil ulang untuk masuk ke dashboard
+                } else {
+                    alert('Password salah!');
+                }
+            });
+            
+            logoutBtn.addEventListener('click', () => {
+                if (confirm('Apakah Anda yakin ingin logout?')) {
+                    localStorage.removeItem('currentUser');
+                    initializeApp();
+                }
+            });
+
+            // Logika Navigasi Dashboard (termasuk Hamburger Menu)
+            hamburgerBtn.addEventListener('click', () => {
+                navList.classList.toggle('mobile-nav-active');
+                hamburgerBtn.classList.toggle('active'); // Animasi hamburger
+            });
+
+            navLinks.forEach(link => {
+                link.addEventListener('click', (e) => {
+                    e.preventDefault(); // Mencegah perilaku default link
+                    const targetId = link.getAttribute('data-target');
+                    
+                    // Handle dropdown links specifically
+                    if (link.classList.contains('dropdown-toggle')) {
+                        // For mobile: if dropdown is expanded, collapse it, otherwise do nothing (it will open on hover)
+                        // This prevents dropdown from closing the mobile menu if it's already open
+                        if (navList.classList.contains('mobile-nav-active') && !link.closest('.dropdown-content')) {
+                             // This is a click on "Produk" itself, not a sub-item
+                             // We don't want it to close the menu, just let the dropdown open
+                             return; 
+                        }
+                    }
+
+                    if (targetId) { // Jika ada data-target, itu adalah link navigasi ke section
+                        pageContents.forEach(page => page.classList.remove('active'));
+                        const targetContent = document.getElementById(targetId);
+                        if (targetContent) {
+                            targetContent.classList.add('active');
+                            
+                            // Atur kelas 'active' pada navlink
+                            navLinks.forEach(nav => nav.classList.remove('active'));
+                            link.classList.add('active');
+
+                            // Jika link yang diklik ada di dalam dropdown, pastikan link induk dropdown juga aktif
+                            if (link.closest('.dropdown-content')) {
+                                document.querySelector('.dropdown > a.nav-link').classList.add('active');
+                            }
+
+                            // Scroll to target if not 'beranda'
+                            if (targetId !== 'beranda') {
+                                targetContent.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                            } else {
+                                window.scrollTo({ top: 0, behavior: 'smooth' });
+                            }
+                        }
+                    }
+                    
+                    // Tutup menu mobile setelah link diklik (kecuali dropdown toggle)
+                    if (window.innerWidth <= 768 && !link.classList.contains('dropdown-toggle')) {
+                        navList.classList.remove('mobile-nav-active');
+                        hamburgerBtn.classList.remove('active');
+                    }
+                });
+            });
+
+            // Header scroll effect
+            window.addEventListener('scroll', () => {
+                if (window.scrollY > 50) {
+                    mainHeader.classList.add('scrolled');
+                } else {
+                    mainHeader.classList.remove('scrolled');
+                }
+            });
+
+            // Initial app load
+            initializeApp();
+        });
+    </script>
+</body>
+</html>
